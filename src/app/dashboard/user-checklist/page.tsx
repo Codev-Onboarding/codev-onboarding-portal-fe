@@ -46,7 +46,7 @@ const page = () => {
 	};
 	return (
 		<Box display="flex" pt="110px" height="100vh">
-			<Box width={200} bgcolor="#FFEFEF" />
+			{/* <Box width={200} bgcolor="#FFEFEF" /> */}
 			<Box display="flex" flexDirection="column" flexGrow={1}>
 				<Box
 					display="flex"

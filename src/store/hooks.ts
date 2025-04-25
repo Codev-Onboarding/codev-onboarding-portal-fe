@@ -30,15 +30,17 @@ export const sliceCreate = (name: string, initialState: any, action: any) =>
 
 export const createApiThunk = <ResponseType, PayloadType = void>(
 	type: string,
-	endpoint: string,
+	endpoint: string | ((payload: PayloadType) => string),
 	method: "GET" | "POST" | "PUT" | "DELETE" = "GET"
 ) =>
 	createAsyncThunk<ResponseType, PayloadType>(
 		type,
 		async (payload, { rejectWithValue }) => {
 			try {
+				const url =
+					typeof endpoint === "function" ? endpoint(payload) : endpoint;
 				const res = await api.request<ResponseType>({
-					url: endpoint,
+					url,
 					method,
 					...(payload && { data: payload }),
 				});
