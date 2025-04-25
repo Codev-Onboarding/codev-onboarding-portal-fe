@@ -1,11 +1,49 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import { Check, Delete } from "@mui/icons-material";
-
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { withAuth } from "@/components/withAuth";
+import { useRouter } from "next/navigation";
 
+import { userThunks } from "@/store/slice/users";
 const page = () => {
+	const dispatch = useAppDispatch();
+
+	const router = useRouter();
+	const {
+		loading,
+		data: usersList,
+		error,
+		success,
+	} = useAppSelector((state) => state.getUsers);
+
+	useEffect(() => {
+		console.log("USerData", usersList);
+	}, [usersList]);
+
+	const users: any[] = usersList?.users || [];
+	const [query, setQuery] = useState<{
+		role?: string | null;
+		page?: number;
+		limit?: number;
+		filter?: string | null;
+		sort?: string | null;
+	}>({
+		role: null,
+		page: 1,
+		limit: 10,
+		filter: null,
+		sort: null,
+	});
+
+	useEffect(() => {
+		getUsers();
+	}, []);
+
+	const getUsers = () => {
+		dispatch(userThunks.getUsers(query));
+	};
 	return (
 		<Box display="flex" pt="110px" height="100vh">
 			<Box width={200} bgcolor="#FFEFEF" />
@@ -51,64 +89,54 @@ const page = () => {
 								Action
 							</Typography>
 						</Box>
-						<Box
-							display="flex"
-							justifyContent="space-between"
-							py={1}
-							sx={{ borderBottom: "1px solid #ddd" }}
-						>
-							<Typography variant="body1" width={200}>
-								John Doe
-							</Typography>
-							<Typography variant="body1" width={200}>
-								johndoe@mail.com
-							</Typography>
-							<Box display="flex" gap={2} width={300} justifyContent="center">
-								<Button variant="contained" color="success">
-									Update Role
-								</Button>
-								<Button variant="contained" color="error">
-									Disable
-								</Button>
-							</Box>
-							<Box display="flex" gap={2} width={300} justifyContent="center">
-								<Button variant="contained" color="success">
-									<Check />
-								</Button>
-								<Button variant="contained" color="error">
-									<Delete />
-								</Button>
-							</Box>
-						</Box>
-						<Box
-							display="flex"
-							justifyContent="space-between"
-							py={1}
-							sx={{ borderBottom: "1px solid #ddd" }}
-						>
-							<Typography variant="body1" width={200}>
-								John Doe
-							</Typography>
-							<Typography variant="body1" width={200}>
-								johndoe@mail.com
-							</Typography>
-							<Box display="flex" gap={2} width={300} justifyContent="center">
-								<Button variant="contained" color="success">
-									Update Role
-								</Button>
-								<Button variant="contained" color="error">
-									Disable
-								</Button>
-							</Box>
-							<Box display="flex" gap={2} width={300} justifyContent="center">
-								<Button variant="contained" color="success">
-									<Check />
-								</Button>
-								<Button variant="contained" color="error">
-									<Delete />
-								</Button>
-							</Box>
-						</Box>
+						{users?.length ? (
+							<>
+								{users.map((user: any) => {
+									return (
+										<Box
+											key={user._id}
+											display="flex"
+											justifyContent="space-between"
+											py={1}
+											sx={{ borderBottom: "1px solid #ddd" }}
+										>
+											<Typography variant="body1" width={200}>
+												{user.name || "John Doe"}
+											</Typography>
+											<Typography variant="body1" width={200}>
+												{user.email || "johndoe@mail.com"}
+											</Typography>
+											<Box
+												display="flex"
+												gap={2}
+												width={300}
+												justifyContent="center"
+											>
+												<Button variant="contained" color="success">
+													Update Role
+												</Button>
+												<Button variant="contained" color="error">
+													Disable
+												</Button>
+											</Box>
+											<Box
+												display="flex"
+												gap={2}
+												width={300}
+												justifyContent="center"
+											>
+												<Button variant="contained" color="success">
+													<Check />
+												</Button>
+												<Button variant="contained" color="error">
+													<Delete />
+												</Button>
+											</Box>
+										</Box>
+									);
+								})}
+							</>
+						) : null}
 					</Box>
 				</Box>
 			</Box>

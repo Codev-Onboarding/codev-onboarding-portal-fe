@@ -6,7 +6,7 @@ import api from "../utils/axios";
 
 export const sliceCreate = (name: string, initialState: any, action: any) =>
 	createSlice({
-		name: "user",
+		name: name,
 		initialState,
 		reducers: {},
 		extraReducers: (builder) => {
@@ -18,7 +18,7 @@ export const sliceCreate = (name: string, initialState: any, action: any) =>
 				.addCase(action.fulfilled, (state, action) => {
 					state.loading = false;
 					state.success = true;
-					state.users = action.payload;
+					state.data = action.payload;
 				})
 				.addCase(action.rejected, (state, action) => {
 					state.loading = false;
