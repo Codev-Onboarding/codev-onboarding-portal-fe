@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import { Check, Delete } from "@mui/icons-material";
