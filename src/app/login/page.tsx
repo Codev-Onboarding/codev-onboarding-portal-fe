@@ -85,7 +85,7 @@ const page = () => {
 					/>
 					<Button
 						variant="contained"
-						sx={{ borderRadius: 2 }}
+						sx={{ borderRadius: 2, bgcolor: "#65BCF2", "&:hover": { bgcolor: "#54A9DD" } }}
 						onClick={() => login()}
 					>
 						Log In
