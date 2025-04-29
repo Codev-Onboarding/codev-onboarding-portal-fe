@@ -1,14 +1,16 @@
-import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
-import type { RootState } from "./rootReducer";
-import type { AppDispatch } from "./store";
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import api from "../utils/axios";
+import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
+import type { RootState } from './rootReducer';
+import type { AppDispatch } from './store';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import api from '../utils/axios';
 
 export const sliceCreate = (name: string, initialState: any, action: any) =>
 	createSlice({
 		name: name,
 		initialState,
-		reducers: {},
+		reducers: {
+			reset: () => initialState,
+		},
 		extraReducers: (builder) => {
 			builder
 				.addCase(action.pending, (state) => {
@@ -31,14 +33,14 @@ export const sliceCreate = (name: string, initialState: any, action: any) =>
 export const createApiThunk = <ResponseType, PayloadType = void>(
 	type: string,
 	endpoint: string | ((payload: PayloadType) => string),
-	method: "GET" | "POST" | "PUT" | "DELETE" = "GET"
+	method: 'GET' | 'POST' | 'PUT' | 'DELETE' = 'GET'
 ) =>
 	createAsyncThunk<ResponseType, PayloadType>(
 		type,
 		async (payload, { rejectWithValue }) => {
 			try {
 				const url =
-					typeof endpoint === "function" ? endpoint(payload) : endpoint;
+					typeof endpoint === 'function' ? endpoint(payload) : endpoint;
 				const res = await api.request<ResponseType>({
 					url,
 					method,

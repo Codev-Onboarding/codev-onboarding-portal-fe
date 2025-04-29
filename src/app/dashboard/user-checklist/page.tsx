@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Button, TextField, Typography } from '@mui/material';
 import { Check, Delete } from '@mui/icons-material';
+
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { withAuth } from '@/components/withAuth';
 import { useRouter } from 'next/navigation';
@@ -9,10 +10,21 @@ import { useRouter } from 'next/navigation';
 import { userThunks } from '@/store/slice/users';
 import UpdateRoleModal from './UpdateRoleModal';
 
+type ModalStateType = {
+	open: boolean;
+	item: { name: string; role: string } | null;
+};
+
 const page = () => {
-	const [openModal, setOpenModal] = useState(false);
+	const [openModalState, setOpenModalState] = useState<ModalStateType>({
+		open: false,
+		item: null,
+	});
 	const handleClose = () => {
-		setOpenModal(false);
+		setOpenModalState({ open: false, item: null });
+	};
+	const handleClickUpdateRole = (user: { name: string; role: string }) => {
+		setOpenModalState({ open: true, item: user });
 	};
 
 	const dispatch = useAppDispatch();
@@ -51,6 +63,7 @@ const page = () => {
 	const getUsers = () => {
 		dispatch(userThunks.getUsers(query));
 	};
+
 	return (
 		<Box display='flex' pt='110px' height='100vh'>
 			{/* <Box width={200} bgcolor="#FFEFEF" /> */}
@@ -119,7 +132,11 @@ const page = () => {
 												width={300}
 												justifyContent='center'
 											>
-												<Button variant='contained' color='success'>
+												<Button
+													variant='contained'
+													color='success'
+													onClick={() => handleClickUpdateRole(user)}
+												>
 													Update Role
 												</Button>
 												<Button variant='contained' color='error'>
@@ -147,7 +164,14 @@ const page = () => {
 					</Box>
 				</Box>
 			</Box>
-			<UpdateRoleModal handleClose={handleClose} openModal={openModal} />
+			{openModalState.open && (
+				<UpdateRoleModal
+					handleClose={handleClose}
+					openModal={openModalState.open}
+					user={openModalState.item}
+					getUsers={getUsers}
+				/>
+			)}
 		</Box>
 	);
 };
