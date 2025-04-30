@@ -1,4 +1,4 @@
-import { createApiThunk, sliceCreate } from "../hooks";
+import { createApiThunk, sliceCreate } from '../hooks';
 
 const initialState = {
 	data: {},
@@ -8,42 +8,42 @@ const initialState = {
 };
 
 export const validateToken = createApiThunk<any, { token: string }>(
-	"auth/validateToken",
-	"auth/validateToken",
-	"GET"
+	'auth/validateToken',
+	'auth/validateToken',
+	'GET'
 );
 
 export const login = createApiThunk<any, { email: string; password: string }>(
-	"auth/login",
-	"auth/login",
-	"POST"
+	'auth/login',
+	'auth/login',
+	'POST'
 );
 
 export const register = createApiThunk<any, any>(
-	"auth/register",
-	"/register",
-	"POST"
+	'auth/register',
+	'/register',
+	'POST'
 );
 
 export const resetPassword = createApiThunk<any, { email: string }>(
-	"auth/resetPassword",
-	"/reset-password",
-	"POST"
+	'auth/resetPassword',
+	'/reset-password',
+	'POST'
 );
 
 export const validateTokenSlice = sliceCreate(
-	"validateToken",
+	'validateToken',
 	initialState,
 	validateToken
 ).reducer;
-export const loginSlice = sliceCreate("login", initialState, login).reducer;
+export const loginSlice = sliceCreate('login', initialState, login).reducer;
 export const registerSlice = sliceCreate(
-	"register",
+	'register',
 	initialState,
 	register
 ).reducer;
 export const resetPasswordSlice = sliceCreate(
-	"resetPassword",
+	'resetPassword',
 	initialState,
 	resetPassword
 ).reducer;

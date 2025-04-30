@@ -1,13 +1,32 @@
-"use client";
-import React, { useState, useEffect } from "react";
-import { Box, Button, TextField, Typography } from "@mui/material";
-import { Check, Delete } from "@mui/icons-material";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { withAuth } from "@/components/withAuth";
-import { useRouter } from "next/navigation";
+'use client';
+import React, { useState, useEffect } from 'react';
+import { Box, Button, TextField, Typography } from '@mui/material';
+import { Check, Delete } from '@mui/icons-material';
 
-import { userThunks } from "@/store/slice/users";
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { withAuth } from '@/components/withAuth';
+import { useRouter } from 'next/navigation';
+
+import { userThunks } from '@/store/slice/users';
+import UpdateRoleModal from './UpdateRoleModal';
+
+type ModalStateType = {
+	open: boolean;
+	item: { name: string; role: string } | null;
+};
+
 const page = () => {
+	const [openModalState, setOpenModalState] = useState<ModalStateType>({
+		open: false,
+		item: null,
+	});
+	const handleClose = () => {
+		setOpenModalState({ open: false, item: null });
+	};
+	const handleClickUpdateRole = (user: { name: string; role: string }) => {
+		setOpenModalState({ open: true, item: user });
+	};
+
 	const dispatch = useAppDispatch();
 
 	const router = useRouter();
@@ -19,7 +38,7 @@ const page = () => {
 	} = useAppSelector((state) => state.getUsers);
 
 	useEffect(() => {
-		console.log("USerData", usersList);
+		console.log('USerData', usersList);
 	}, [usersList]);
 
 	const users: any[] = usersList?.users || [];
@@ -44,48 +63,49 @@ const page = () => {
 	const getUsers = () => {
 		dispatch(userThunks.getUsers(query));
 	};
+
 	return (
-		<Box display="flex" pt="110px" height="100vh">
+		<Box display='flex' pt='110px' height='100vh'>
 			{/* <Box width={200} bgcolor="#FFEFEF" /> */}
-			<Box display="flex" flexDirection="column" flexGrow={1}>
+			<Box display='flex' flexDirection='column' flexGrow={1}>
 				<Box
-					display="flex"
-					flexDirection="column"
+					display='flex'
+					flexDirection='column'
 					gap={6}
-					bgcolor="#fff"
-					boxShadow="rgba(0, 0, 0, 0.16) 0px 1px 4px"
+					bgcolor='#fff'
+					boxShadow='rgba(0, 0, 0, 0.16) 0px 1px 4px'
 					m={4}
 					p={4}
 				>
-					<Box display="flex" justifyContent="space-between">
-						<Button variant="contained">Add User</Button>
-						<Box display="flex" alignItems="center" gap={1}>
+					<Box display='flex' justifyContent='space-between'>
+						<Button variant='contained'>Add User</Button>
+						<Box display='flex' alignItems='center' gap={1}>
 							<Typography>Search:</Typography>
 							<TextField
-								variant="standard"
-								type="text"
-								name="search"
-								placeholder="Enter keyword..."
+								variant='standard'
+								type='text'
+								name='search'
+								placeholder='Enter keyword...'
 							/>
 						</Box>
 					</Box>
-					<Box display="flex" flexDirection="column">
+					<Box display='flex' flexDirection='column'>
 						<Box
-							display="flex"
-							justifyContent="space-between"
+							display='flex'
+							justifyContent='space-between'
 							py={2}
-							sx={{ borderBottom: "1px solid #ddd" }}
+							sx={{ borderBottom: '1px solid #ddd' }}
 						>
-							<Typography variant="body1" width={200}>
+							<Typography variant='body1' width={200}>
 								Name
 							</Typography>
-							<Typography variant="body1" width={200}>
+							<Typography variant='body1' width={200}>
 								Email
 							</Typography>
-							<Typography variant="body1" width={300} textAlign="center">
+							<Typography variant='body1' width={300} textAlign='center'>
 								Task
 							</Typography>
-							<Typography variant="body1" width={300} textAlign="center">
+							<Typography variant='body1' width={300} textAlign='center'>
 								Action
 							</Typography>
 						</Box>
@@ -95,40 +115,44 @@ const page = () => {
 									return (
 										<Box
 											key={user._id}
-											display="flex"
-											justifyContent="space-between"
+											display='flex'
+											justifyContent='space-between'
 											py={1}
-											sx={{ borderBottom: "1px solid #ddd" }}
+											sx={{ borderBottom: '1px solid #ddd' }}
 										>
-											<Typography variant="body1" width={200}>
-												{user.name || "John Doe"}
+											<Typography variant='body1' width={200}>
+												{user.name || 'John Doe'}
 											</Typography>
-											<Typography variant="body1" width={200}>
-												{user.email || "johndoe@mail.com"}
+											<Typography variant='body1' width={200}>
+												{user.email || 'johndoe@mail.com'}
 											</Typography>
 											<Box
-												display="flex"
+												display='flex'
 												gap={2}
 												width={300}
-												justifyContent="center"
+												justifyContent='center'
 											>
-												<Button variant="contained" color="success">
+												<Button
+													variant='contained'
+													color='success'
+													onClick={() => handleClickUpdateRole(user)}
+												>
 													Update Role
 												</Button>
-												<Button variant="contained" color="error">
+												<Button variant='contained' color='error'>
 													Disable
 												</Button>
 											</Box>
 											<Box
-												display="flex"
+												display='flex'
 												gap={2}
 												width={300}
-												justifyContent="center"
+												justifyContent='center'
 											>
-												<Button variant="contained" color="success">
+												<Button variant='contained' color='success'>
 													<Check />
 												</Button>
-												<Button variant="contained" color="error">
+												<Button variant='contained' color='error'>
 													<Delete />
 												</Button>
 											</Box>
@@ -140,6 +164,14 @@ const page = () => {
 					</Box>
 				</Box>
 			</Box>
+			{openModalState.open && (
+				<UpdateRoleModal
+					handleClose={handleClose}
+					openModal={openModalState.open}
+					user={openModalState.item}
+					getUsers={getUsers}
+				/>
+			)}
 		</Box>
 	);
 };

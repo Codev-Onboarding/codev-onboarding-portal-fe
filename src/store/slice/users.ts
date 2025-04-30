@@ -1,4 +1,4 @@
-import { createApiThunk, sliceCreate } from "../hooks";
+import { createApiThunk, sliceCreate } from '../hooks';
 
 const initialState = {
 	data: {},
@@ -16,7 +16,7 @@ export const getUsers = createApiThunk<
 		filter?: string | null;
 		sort?: string | null;
 	}
->("users/get-all-users", "users/get-all-users", "GET");
+>('users/get-all-users', 'users/get-all-users', 'GET');
 
 export const adminAddUser = createApiThunk<
 	any,
@@ -25,7 +25,7 @@ export const adminAddUser = createApiThunk<
 		name: string;
 		email: string;
 	}
->("users/admin-user-create", "users/admin-user-create", "POST");
+>('users/admin-user-create', 'users/admin-user-create', 'POST');
 
 export const adminUpdateUser = createApiThunk<
 	any,
@@ -37,28 +37,31 @@ export const adminUpdateUser = createApiThunk<
 		userId?: string;
 	}
 >(
-	"users/admin-user-update",
+	'users/admin-user-update',
 	(data) => `users/admin-user-update/${data.userId}`,
-	"POST"
+	'PUT'
 );
 
 export const getUsersSlice = sliceCreate(
-	"get-all-users",
+	'get-all-users',
 	initialState,
 	getUsers
 ).reducer;
 
 export const adminAddUserSlice = sliceCreate(
-	"admin-add-user",
+	'admin-add-user',
 	initialState,
 	adminAddUser
 ).reducer;
 
-export const adminUpdateUserSlice = sliceCreate(
-	"admin-update-user",
+const adminUpdateUserSliceObj = sliceCreate(
+	'admin-update-user',
 	initialState,
-	adminAddUser
-).reducer;
+	adminUpdateUser
+);
+
+export const adminUpdateUserSlice = adminUpdateUserSliceObj.reducer;
+export const { reset: resetAdminUpdateUser } = adminUpdateUserSliceObj.actions;
 
 export const userReducers = {
 	getUsers: getUsersSlice,
