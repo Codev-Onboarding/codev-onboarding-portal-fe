@@ -4,7 +4,7 @@ import { Box, Button, TextField, Typography } from "@mui/material";
 import { Check, Delete } from "@mui/icons-material";
 
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { withAuth } from "@/components/withAuth";
+import { unAuthRoute, withAuth } from "@/components/withAuth";
 import { useRouter } from "next/navigation";
 
 import { userThunks } from "@/store/slice/users";
@@ -12,6 +12,7 @@ import UpdateRoleModal from "./UpdateRoleModal";
 import AddUserModal from "@/components/modals/AddUserModal";
 import SnackbarSuccess from "@/components/snackbar/SnackbarSuccess";
 import SnackbarError from "@/components/snackbar/SnackbarError";
+import DisableUserModal from "@/components/modals/DisableUserModal";
 
 type ModalStateType = {
   open: boolean;
@@ -21,7 +22,10 @@ type ModalStateType = {
 const page = () => {
   const [open, setOpen] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
-
+  const [disableOpen, setDisableOpen] = useState<ModalStateType>({
+    open: false,
+    item: null,
+  });
   const [openModalState, setOpenModalState] = useState<ModalStateType>({
     open: false,
     item: null,
@@ -81,6 +85,14 @@ const page = () => {
   const handleCloseSnackbar = () => {
     setOpenSnackbar(false);
     // Reset form state here if needed
+  };
+
+  const handleDisableUser = (user: { name: string; role: string }) => {
+    setDisableOpen({ open: true, item: user });
+  };
+
+  const handleCloseDisableUser = () => {
+    setDisableOpen({ open: false, item: null });
   };
   useEffect(() => {
     if (addUserSuccess) {
@@ -173,10 +185,18 @@ const page = () => {
                       py={1}
                       sx={{ borderBottom: "1px solid #ddd" }}
                     >
-                      <Typography variant="body1" width={200}>
+                      <Typography
+                        variant="body1"
+                        width={200}
+                        sx={{ color: user.enabled ? undefined : "gray" }}
+                      >
                         {user.name || "John Doe"}
                       </Typography>
-                      <Typography variant="body1" width={200}>
+                      <Typography
+                        variant="body1"
+                        width={200}
+                        sx={{ color: user.enabled ? undefined : "gray" }}
+                      >
                         {user.email || "johndoe@mail.com"}
                       </Typography>
                       <Box
@@ -189,10 +209,16 @@ const page = () => {
                           variant="contained"
                           color="success"
                           onClick={() => handleClickUpdateRole(user)}
+                          disabled={user.enabled === false}
                         >
                           Update Role
                         </Button>
-                        <Button variant="contained" color="error">
+                        <Button
+                          variant="contained"
+                          color="error"
+                          onClick={() => handleDisableUser(user)}
+                          disabled={user.enabled === false}
+                        >
                           Disable
                         </Button>
                       </Box>
@@ -202,10 +228,18 @@ const page = () => {
                         width={300}
                         justifyContent="center"
                       >
-                        <Button variant="contained" color="success">
+                        <Button
+                          variant="contained"
+                          color="success"
+                          disabled={user.enabled === false}
+                        >
                           <Check />
                         </Button>
-                        <Button variant="contained" color="error">
+                        <Button
+                          variant="contained"
+                          color="error"
+                          disabled={user.enabled === false}
+                        >
                           <Delete />
                         </Button>
                       </Box>
@@ -233,8 +267,17 @@ const page = () => {
         />
       )}
       {openSnackbar && snackbarDisplay()}
+      {disableOpen.open && (
+        <DisableUserModal
+          handleClose={handleCloseDisableUser}
+          openModal={disableOpen.open}
+          user={disableOpen.item}
+          getUsers={getUsers}
+        />
+      )}
     </Box>
   );
 };
 
-export default withAuth(page);
+// export default withAuth(page);
+export default unAuthRoute(page);
